@@ -15,6 +15,6 @@ cd site
 hexo -s
 hexo generate
 
-# upload file to bucket www.hongsuanni.com
-aws s3 cp  public/ s3://www.hongsuanni.com/ --region ap-southeast-1 --recursive
+# upload file to bucket blog.hongsuanni.com
+aws s3 cp  public/ s3://blog.hongsuanni.com/ --region ap-southeast-1 --recursive
 ```
