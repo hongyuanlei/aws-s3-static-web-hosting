@@ -1,0 +1,14 @@
+---
+  - name: setup s3 static web hosting stack
+    cloudformation:
+      stack_name: "{{application}}-{{version}}"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/template/s3_static_web_hosting.yml"
+      stack_policy: "cloudformation/policy/stack-policy.json"
+      template_parameters:
+        PublicBucket: "{{bucket_name}}"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"

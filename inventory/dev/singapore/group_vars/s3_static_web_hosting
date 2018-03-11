@@ -1,0 +1,4 @@
+application: 's3-static-web-hosting'
+version: '1'
+
+bucket_name: 'www.hongsuanni.com'

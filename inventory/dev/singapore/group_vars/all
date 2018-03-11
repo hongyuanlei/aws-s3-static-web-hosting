@@ -1,0 +1,4 @@
+project: 4-weeks-4-stacks
+aws_region: ap-southeast-1
+
+#ansible_python_interpreter: /usr/local/bin/python
