@@ -4,6 +4,19 @@ Parameters:
   PublicBucket:
     Description: public s3 bucket name
     Type: String
+  HostedZoneName:
+    Description: hosted zone name
+    Type: String
+  HostedZoneId:
+    #https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
+    Description: hosted zone id
+    Type: String
+  WebsiteEndpoint:
+    Description: website endpoint
+    Type: String
+  RecordName:
+    Description: Record name
+    Type: String
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -32,6 +45,16 @@ Resources:
             Resource:
             - !Join ['', ['arn:aws:s3:::', !Ref 'S3Bucket']]
 
+  StaticWebRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Type: A
+      HostedZoneName: !Join ['', [!Ref 'HostedZoneName', '.']]
+      Name: !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName', '.']]
+      AliasTarget:
+        DNSName: !Ref 'WebsiteEndpoint'
+        EvaluateTargetHealth: True
+        HostedZoneId: !Ref 'HostedZoneId'
 Outputs:
   WebsiteURL:
     Value: !GetAtt [S3Bucket, WebsiteURL]

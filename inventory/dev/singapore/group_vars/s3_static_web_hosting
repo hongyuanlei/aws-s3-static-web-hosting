@@ -1,4 +1,8 @@
-application: 's3-static-web-hosting'
+application: s3-static-web-hosting
 version: '1'
 
-bucket_name: 'www.hongsuanni.com'
+bucket_name: blog.hongsuanni.com
+hosted_zone_id: Z3O0J2DXBE1FTB
+website_endpoint: s3-website-ap-southeast-1.amazonaws.com
+hosted_zone_name: hongsuanni.com
+record_name: blog

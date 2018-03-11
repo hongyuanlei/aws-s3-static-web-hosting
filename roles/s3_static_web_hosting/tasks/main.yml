@@ -9,6 +9,10 @@
       stack_policy: "cloudformation/policy/stack-policy.json"
       template_parameters:
         PublicBucket: "{{bucket_name}}"
+        HostedZoneId: "{{hosted_zone_id}}"
+        WebsiteEndpoint: "{{website_endpoint}}"
+        HostedZoneName: "{{hosted_zone_name}}"
+        RecordName: "{{record_name}}"
       tags:
         project: "{{project}}"
         application: "{{application}}"
