@@ -1,2 +1,5 @@
 [s3_static_web_hosting]
 s3_static_web_hosting
+
+[https_cloudfront_static_web_hosting]
+https_cloudfront_static_web_hosting

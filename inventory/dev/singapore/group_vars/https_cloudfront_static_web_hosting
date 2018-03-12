@@ -1,0 +1,6 @@
+application: https-cloudfront-static-web-hosting
+version: '1'
+
+bucket_name: blog.hongsuanni.com
+hosted_zone_name: hongsuanni.com
+record_name: blog

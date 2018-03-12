@@ -1,0 +1,17 @@
+---
+  - name: setup https cloudfront s3 static web hosting stack
+    cloudformation:
+      stack_name: "{{application}}-{{version}}"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/template/https_cloudfront_static_web_hosting.yml"
+      stack_policy: "cloudformation/policy/stack-policy.json"
+      template_parameters:
+        PublicBucket: "{{bucket_name}}"
+        HostedZoneName: "{{hosted_zone_name}}"
+        RecordName: "{{record_name}}"
+        AcmCertArn: "{{acm_cert_arn}}"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"

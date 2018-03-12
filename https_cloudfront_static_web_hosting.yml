@@ -1,0 +1,6 @@
+---
+- hosts: https_cloudfront_static_web_hosting
+  connection: local
+  gather_facts: False
+  roles:
+    - https_cloudfront_static_web_hosting

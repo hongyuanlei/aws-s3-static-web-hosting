@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: s3 static web hosting stack
+Parameters:
+  PublicBucket:
+    Description: public s3 bucket name
+    Type: String
+  HostedZoneName:
+    Description: hosted zone name
+    Type: String
+  AcmCertArn:
+    Description: acm cert arn
+    Type: String
+  RecordName:
+    Description: Record name
+    Type: String
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref 'PublicBucket'
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref "S3Bucket"
+      PolicyDocument:
+        Statement:
+          - Action: ['s3:Get*']
+            Effect: Allow
+            Principal: "*"
+            Resource:
+            - !Join ['', ['arn:aws:s3:::', !Ref 'S3Bucket', /*]]
+          - Action: ['s3:List*']
+            Effect: Allow
+            Principal: "*"
+            Resource:
+            - !Join ['', ['arn:aws:s3:::', !Ref 'S3Bucket']]
+
+  CloudfrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultRootObject: 'index.html'
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          TargetOriginId: 'static-website-hosting'
+          ViewerProtocolPolicy: redirect-to-https
+        Origins:
+        - DomainName: !GetAtt [S3Bucket, DomainName]
+          Id: 'static-website-hosting'
+          CustomOriginConfig:
+            HTTPPort: '80'
+            HTTPSPort: '443'
+            OriginKeepaliveTimeout: '5'
+            OriginProtocolPolicy: 'match-viewer'
+        Aliases:
+          - !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName']]
+        Enabled: 'true'
+        IPV6Enabled: 'true'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref 'AcmCertArn'
+          SslSupportMethod: 'sni-only'
+
+  StaticWebRecordSet:
+    Type: AWS::Route53::RecordSet
+    DependsOn: CloudfrontDistribution
+    Properties:
+      HostedZoneName: !Join ['', [!Ref 'HostedZoneName', '.']]
+      Name: !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName', '.']]
+      Type: CNAME
+      TTL: '900'
+      ResourceRecords:
+      - !Join ['', [!GetAtt [CloudfrontDistribution, DomainName], '.']]
