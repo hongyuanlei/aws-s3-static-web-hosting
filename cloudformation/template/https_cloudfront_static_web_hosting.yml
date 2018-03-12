@@ -14,10 +14,15 @@ Parameters:
     Description: Record name
     Type: String
 Resources:
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName']]
+
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      AccessControl: PublicRead
       BucketName: !Ref 'PublicBucket'
       WebsiteConfiguration:
         IndexDocument: index.html
@@ -30,16 +35,12 @@ Resources:
       Bucket: !Ref "S3Bucket"
       PolicyDocument:
         Statement:
-          - Action: ['s3:Get*']
+          - Action: ['s3:GetObject']
             Effect: Allow
-            Principal: "*"
+            Principal:
+              AWS: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOriginAccessIdentity}'
             Resource:
             - !Join ['', ['arn:aws:s3:::', !Ref 'S3Bucket', /*]]
-          - Action: ['s3:List*']
-            Effect: Allow
-            Principal: "*"
-            Resource:
-            - !Join ['', ['arn:aws:s3:::', !Ref 'S3Bucket']]
 
   CloudfrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -60,11 +61,8 @@ Resources:
         Origins:
         - DomainName: !GetAtt [S3Bucket, DomainName]
           Id: 'static-website-hosting'
-          CustomOriginConfig:
-            HTTPPort: '80'
-            HTTPSPort: '443'
-            OriginKeepaliveTimeout: '5'
-            OriginProtocolPolicy: 'match-viewer'
+          S3OriginConfig:
+            OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
         Aliases:
           - !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName']]
         Enabled: 'true'
