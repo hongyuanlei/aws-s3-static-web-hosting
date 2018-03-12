@@ -6,6 +6,16 @@
 ansible-playbook -i inventory/dev/singapore/inentory s3_static_web_hosting.yml
 ```
 
+If you want to create your own, you need to change the inventory under inventory/dev/singapore/group_vars/s3_static_web_hosting
+
+### Run and create https + cloudfront + s3 static web hosting stack
+
+```
+ansible-playbook -i inventory/dev/singapore/inentory https_cloudfront_static_web_hosting.yml
+```
+
+If you want to create your own, you need to change the inventory under inventory/dev/singapore/group_vars/https_cloudfront_static_web_hosting
+
 ### Upload static file into s3 bucket
 
 ```Shell
