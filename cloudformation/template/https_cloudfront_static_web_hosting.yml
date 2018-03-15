@@ -52,6 +52,7 @@ Resources:
           - GET
           - HEAD
           - OPTIONS
+          Compress: true
           ForwardedValues:
             QueryString: 'false'
             Cookies:
@@ -65,8 +66,8 @@ Resources:
             OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
         Aliases:
           - !Join ['', [!Ref 'RecordName', '.', !Ref 'HostedZoneName']]
-        Enabled: 'true'
-        IPV6Enabled: 'true'
+        Enabled: true
+        IPV6Enabled: true
         ViewerCertificate:
           AcmCertificateArn: !Ref 'AcmCertArn'
           SslSupportMethod: 'sni-only'
